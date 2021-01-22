@@ -22,13 +22,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="@dimen/padding_default"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Заголовок"
+            android:hint="@string/title"
             android:textColorHint="@android:color/black">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -45,7 +45,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@null"
-            android:hint="Текст заметки" />
+            android:hint="@string/note_text"
+            android:importantForAutofill="no"
+            android:inputType="text" />
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

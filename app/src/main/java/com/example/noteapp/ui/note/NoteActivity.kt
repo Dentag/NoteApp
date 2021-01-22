@@ -93,7 +93,7 @@ class NoteActivity : AppCompatActivity() {
             Color.PINK -> R.color.color_pink
             Color.GREEN -> R.color.color_green
             Color.BLUE -> R.color.color_blue
-            else -> R.color.white
+            else -> R.color.color_blue
         }
 
         toolbar.setBackgroundColor(resources.getColor(color))
@@ -129,8 +129,9 @@ class NoteActivity : AppCompatActivity() {
     }
 
     private fun createNewNote(): Note = Note(
-        UUID.randomUUID().toString(),
-        titleEt.text.toString(),
-        bodyEt.text.toString()
+        id = UUID.randomUUID().toString(),
+        title = titleEt.text.toString(),
+        note = bodyEt.text.toString(),
+        color = Color.BLUE
     )
 }
