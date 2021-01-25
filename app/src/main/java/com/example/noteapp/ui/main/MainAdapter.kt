@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapp.R
 import com.example.noteapp.data.model.Color
 import com.example.noteapp.data.model.Note
+import com.example.noteapp.databinding.ItemNoteBinding
 
 interface OnItemClickListener {
     fun onItemClick(note: Note)
@@ -35,12 +36,11 @@ class MainAdapter(private val onItemClickListener: OnItemClickListener) :
     override fun getItemCount(): Int = notes.size
 
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val title = itemView.findViewById<TextView>(R.id.title)
-        private val body = itemView.findViewById<TextView>(R.id.body)
+        private val ui: ItemNoteBinding = ItemNoteBinding.bind(itemView)
 
         fun bind(note: Note) {
-            title.text = note.title
-            body.text = note.note
+            ui.title.text = note.title
+            ui.body.text = note.note
 
             val color = when (note.color) {
                 Color.WHITE -> R.color.color_white
@@ -53,6 +53,7 @@ class MainAdapter(private val onItemClickListener: OnItemClickListener) :
             }
 
             itemView.setBackgroundResource(color)
-            itemView.setOnClickListener { onItemClickListener.onItemClick(note) }        }
+            itemView.setOnClickListener { onItemClickListener.onItemClick(note) }
+        }
     }
 }
