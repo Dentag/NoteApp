@@ -1,43 +1,45 @@
 package com.example.noteapp.ui.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.example.noteapp.data.model.Note
 import com.example.noteapp.databinding.ActivityMainBinding
+import com.example.noteapp.ui.base.BaseActivity
 import com.example.noteapp.ui.note.NoteActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
 
-    private lateinit var viewModel: MainViewModel
+    override val viewModel: MainViewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+    override val ui: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
     private lateinit var adapter: MainAdapter
-    private lateinit var ui: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ui = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(ui.root)
         setSupportActionBar(ui.toolbar)
 
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         adapter = MainAdapter(object : OnItemClickListener {
             override fun onItemClick(note: Note) {
                 openNoteScreen(note)
             }
         })
-
         ui.mainRecycler.adapter = adapter
 
-        viewModel.viewState().observe(this,
-            { item ->
-                item?.let { adapter.notes = it.notes }
-            })
+        ui.fab.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                openNoteScreen(null)
+            }
+        })
+    }
 
-        ui.fab.setOnClickListener { openNoteScreen(null) }
+    override fun renderData(data: List<Note>?) {
+        if (data == null) return
+        adapter.notes = data
     }
 
     private fun openNoteScreen(note: Note?) {
-        val intent = NoteActivity.getStartIntent(this, note)
+        val intent = NoteActivity.getStartIntent(this, note?.id)
         startActivity(intent)
     }
 }
