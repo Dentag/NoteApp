@@ -8,21 +8,14 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
-import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import androidx.viewbinding.ViewBinding
 import com.example.noteapp.R
 import com.example.noteapp.data.model.Color
 import com.example.noteapp.data.model.Note
-import com.example.noteapp.databinding.ActivityMainBinding
 import com.example.noteapp.databinding.ActivityNoteBinding
-import com.example.noteapp.extensions.DATE_TIME_FORMAT
+import com.example.noteapp.extensions.format
+import com.example.noteapp.extensions.getColorInt
 import com.example.noteapp.ui.base.BaseActivity
-import com.example.noteapp.ui.main.MainViewModel
-import java.text.SimpleDateFormat
 import java.util.*
 
 private const val SAVE_DELAY = 2000L
@@ -65,14 +58,11 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
         setSupportActionBar(ui.toolbar)
 
         val noteId = intent.getStringExtra(EXTRA_NOTE)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         noteId?.let { id ->
             viewModel.loadNote(id)
-        }
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (noteId == null) supportActionBar?.title = getString(R.string.new_note_title)
+        } ?: let { supportActionBar?.title = getString(R.string.new_note_title) }
 
         ui.titleEt.addTextChangedListener(textChangeListener)
         ui.bodyEt.addTextChangedListener(textChangeListener)
@@ -81,20 +71,15 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
     }
 
     private fun initView() {
-        ui.titleEt.setText(note?.title ?: "")
-        ui.bodyEt.setText(note?.note ?: "")
-        val color = when (note?.color) {
-            Color.WHITE -> R.color.color_white
-            Color.VIOLET -> R.color.color_violet
-            Color.YELLOW -> R.color.color_yellow
-            Color.RED -> R.color.color_red
-            Color.PINK -> R.color.color_pink
-            Color.GREEN -> R.color.color_green
-            Color.BLUE -> R.color.color_blue
-            else -> R.color.color_blue
+        note?.run {
+            supportActionBar?.title = lastChanged.format()
+
+            ui.titleEt.setText(title)
+            ui.bodyEt.setText(note)
+
+            ui.toolbar.setBackgroundColor(color.getColorInt(this@NoteActivity))
         }
 
-        ui.toolbar.setBackgroundColor(resources.getColor(color))
         ui.titleEt.addTextChangedListener(textChangeListener)
         ui.bodyEt.addTextChangedListener(textChangeListener)
     }
@@ -108,18 +93,18 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
     }
 
     private fun triggerSaveNote() {
-        if (ui.titleEt.text == null || ui.titleEt.text!!.length < 3) return
+        ui.titleEt.text?.let {
+            Handler(Looper.getMainLooper()).postDelayed({
+                note = note?.copy(
+                    title = ui.titleEt.text.toString(),
+                    note = ui.bodyEt.text.toString(),
+                    lastChanged = Date()
+                )
+                    ?: createNewNote()
 
-        Handler().postDelayed({
-            note = note?.copy(
-                title = ui.titleEt.text.toString(),
-                note = ui.bodyEt.text.toString(),
-                lastChanged = Date()
-            )
-                ?: createNewNote()
-
-            if (note != null) viewModel.saveChanges(note!!)
-        }, SAVE_DELAY)
+                if (note != null) viewModel.saveChanges(note!!)
+            }, SAVE_DELAY)
+        }
     }
 
     private fun createNewNote(): Note = Note(
