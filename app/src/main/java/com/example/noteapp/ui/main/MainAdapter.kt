@@ -9,6 +9,7 @@ import com.example.noteapp.R
 import com.example.noteapp.data.model.Color
 import com.example.noteapp.data.model.Note
 import com.example.noteapp.databinding.ItemNoteBinding
+import com.example.noteapp.extensions.getColorInt
 
 interface OnItemClickListener {
     fun onItemClick(note: Note)
@@ -42,17 +43,7 @@ class MainAdapter(private val onItemClickListener: OnItemClickListener) :
             ui.title.text = note.title
             ui.body.text = note.note
 
-            val color = when (note.color) {
-                Color.WHITE -> R.color.color_white
-                Color.VIOLET -> R.color.color_violet
-                Color.YELLOW -> R.color.color_yellow
-                Color.RED -> R.color.color_red
-                Color.PINK -> R.color.color_pink
-                Color.GREEN -> R.color.color_green
-                Color.BLUE -> R.color.color_blue
-            }
-
-            itemView.setBackgroundResource(color)
+            ui.container.setCardBackgroundColor(note.color.getColorInt(itemView.context))
             itemView.setOnClickListener { onItemClickListener.onItemClick(note) }
         }
     }
