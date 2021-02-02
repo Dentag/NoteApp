@@ -11,4 +11,8 @@
     <string name="ok_btn_title">ok</string>
     <string name="logout_menu_title">logout</string>
     <string name="snackbar_action">Понятно</string>
+    <string name="change_color_menu_title">Color</string>
+    <string name="delete_menu_title">Delete</string>
+    <string name="delete_dialog_message">Delete</string>
+    <string name="cancel_button_title">Cancel</string>
 </resources>

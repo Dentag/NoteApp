@@ -3,9 +3,7 @@ package com.example.noteapp.ui.base
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.viewbinding.ViewBinding
 import com.example.noteapp.R
 import com.example.noteapp.data.errors.NoAuthException
