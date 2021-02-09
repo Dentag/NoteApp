@@ -16,9 +16,11 @@ import com.example.noteapp.ui.base.BaseActivity
 import com.example.noteapp.ui.note.NoteActivity
 import com.example.noteapp.ui.splash.SplashActivity
 import com.firebase.ui.auth.AuthUI
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.LogoutListener {
+@ExperimentalCoroutinesApi
+class MainActivity : BaseActivity<List<Note>?>(), LogoutDialog.LogoutListener {
 
     override val viewModel: MainViewModel by viewModel()
     override val ui: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
