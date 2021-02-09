@@ -3,15 +3,18 @@ package com.example.noteapp.ui.splash
 import com.example.noteapp.data.Repository
 import com.example.noteapp.data.errors.NoAuthException
 import com.example.noteapp.ui.base.BaseViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
 class SplashViewModel(private val repository: Repository) :
-    BaseViewModel<Boolean?, SplashViewState>() {
+    BaseViewModel<Boolean>() {
 
+    @ExperimentalCoroutinesApi
     fun requestUser() {
-        repository.getCurrentUser().observeForever { user ->
-            viewStateLiveData.value = user?.let {
-                SplashViewState(isAuth = true)
-            } ?: SplashViewState(error = NoAuthException())
+        launch {
+            repository.getCurrentUser()?.let {
+                setData(true)
+            } ?: setError(NoAuthException())
         }
     }
 }

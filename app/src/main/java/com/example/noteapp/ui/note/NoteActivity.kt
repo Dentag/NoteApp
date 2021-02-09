@@ -17,12 +17,16 @@ import com.example.noteapp.databinding.ActivityNoteBinding
 import com.example.noteapp.extensions.format
 import com.example.noteapp.extensions.getColorInt
 import com.example.noteapp.ui.base.BaseActivity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
 
 private const val SAVE_DELAY = 2000L
 
-class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
+@ExperimentalCoroutinesApi
+class NoteActivity : BaseActivity<NoteViewState.Data>() {
 
     override val viewModel: NoteViewModel by viewModel()
     override val ui: ActivityNoteBinding by lazy { ActivityNoteBinding.inflate(layoutInflater) }
@@ -71,7 +75,7 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
         ui.colorPicker.onColorClickListener = {
             color = it
             setToolbarColor(it)
-            triggerSaveNote()
+            saveNote()
         }
 
         setEditListener()
@@ -120,19 +124,23 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
     }
 
     private fun triggerSaveNote() {
-        ui.titleEt.text?.let {
-            Handler(Looper.getMainLooper()).postDelayed({
-                note = note?.copy(
-                    title = ui.titleEt.text.toString(),
-                    note = ui.bodyEt.text.toString(),
-                    color = color,
-                    lastChanged = Date()
-                )
-                    ?: createNewNote()
-
-                note?.let { viewModel.saveChanges(it) }
-            }, SAVE_DELAY)
+        launch {
+            delay(SAVE_DELAY)
+            saveNote()
         }
+    }
+
+    private fun saveNote() {
+        if (ui.titleEt.text == null || ui.titleEt.text!!.length < 3) return
+        note = note?.copy(
+            title = ui.titleEt.text.toString(),
+            note = ui.bodyEt.text.toString(),
+            color = color,
+            lastChanged = Date()
+        )
+            ?: createNewNote()
+
+        note?.let { viewModel.saveChanges(it) }
     }
 
     private fun setEditListener() {

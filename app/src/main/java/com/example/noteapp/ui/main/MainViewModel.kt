@@ -6,35 +6,33 @@ import com.example.noteapp.data.Repository
 import com.example.noteapp.data.model.Note
 import com.example.noteapp.data.model.NoteResult
 import com.example.noteapp.ui.base.BaseViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.lang.reflect.Modifier.PROTECTED
 
+@ExperimentalCoroutinesApi
 class MainViewModel(private val repository: Repository) :
-    BaseViewModel<List<Note>?, MainViewState>() {
+    BaseViewModel<List<Note>?>() {
 
-    private val notesObserver = object : Observer<NoteResult> {
-        override fun onChanged(result: NoteResult?) {
-            if (result == null) return
+    private val notesChannel by lazy { runBlocking { repository.getNotes() } }
 
-            when (result) {
-                is NoteResult.Success<*> -> {
-                    viewStateLiveData.value = MainViewState(notes = result.data as? List<Note>)
-                }
-                is NoteResult.Error -> {
-                    viewStateLiveData.value = MainViewState(error = result.error)
+    init {
+        launch {
+            notesChannel.consumeEach { result ->
+                when (result) {
+                    is NoteResult.Success<*> -> setData(result.data as? List<Note>)
+                    is NoteResult.Error -> setError(result.error)
                 }
             }
         }
     }
 
-    private val repositoryNotes = repository.getNotes()
-
-    init {
-        viewStateLiveData.value = MainViewState()
-        repositoryNotes.observeForever(notesObserver)
-    }
-
+    @ExperimentalCoroutinesApi
     @VisibleForTesting(otherwise = PROTECTED)
     public override fun onCleared() {
-        repositoryNotes.removeObserver(notesObserver)
+        notesChannel.cancel()
+        super.onCleared()
     }
 }

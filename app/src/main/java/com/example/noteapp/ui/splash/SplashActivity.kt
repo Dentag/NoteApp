@@ -5,11 +5,13 @@ import android.os.Looper
 import com.example.noteapp.databinding.ActivitySplashBinding
 import com.example.noteapp.ui.base.BaseActivity
 import com.example.noteapp.ui.main.MainActivity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 
 private const val START_DELAY = 1000L
 
-class SplashActivity : BaseActivity<Boolean?, SplashViewState>() {
+@ExperimentalCoroutinesApi
+class SplashActivity : BaseActivity<Boolean>() {
 
     override val viewModel: SplashViewModel by viewModel()
 
@@ -20,8 +22,8 @@ class SplashActivity : BaseActivity<Boolean?, SplashViewState>() {
         Handler(Looper.getMainLooper()).postDelayed({ viewModel.requestUser() }, START_DELAY)
     }
 
-    override fun renderData(data: Boolean?) {
-        data?.takeIf { it }?.let {
+    override fun renderData(data: Boolean) {
+        if (data) {
             startMainActivity()
         }
     }
