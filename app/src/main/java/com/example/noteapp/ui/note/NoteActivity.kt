@@ -30,7 +30,7 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
     private var color: Color = Color.RED
 
     companion object {
-        private val EXTRA_NOTE = "${NoteActivity::class.java.name} extra.NOTE"
+        private val EXTRA_NOTE = "${NoteActivity::class.java.name} extra.NOTE_ID"
 
         fun getStartIntent(context: Context, noteId: String?): Intent {
             val intent = Intent(context, NoteActivity::class.java)

@@ -1,10 +1,12 @@
 package com.example.noteapp.ui.main
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Observer
 import com.example.noteapp.data.Repository
 import com.example.noteapp.data.model.Note
 import com.example.noteapp.data.model.NoteResult
 import com.example.noteapp.ui.base.BaseViewModel
+import java.lang.reflect.Modifier.PROTECTED
 
 class MainViewModel(private val repository: Repository) :
     BaseViewModel<List<Note>?, MainViewState>() {
@@ -31,7 +33,8 @@ class MainViewModel(private val repository: Repository) :
         repositoryNotes.observeForever(notesObserver)
     }
 
-    override fun onCleared() {
+    @VisibleForTesting(otherwise = PROTECTED)
+    public override fun onCleared() {
         repositoryNotes.removeObserver(notesObserver)
     }
 }
