@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val DATE_TIME_FORMAT = "dd.MMM.yy HH:mm"
-const val DEBUG_MODE = true
+const val DEBUG_MODE = false
 
 fun Date.format(): String =
     SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
